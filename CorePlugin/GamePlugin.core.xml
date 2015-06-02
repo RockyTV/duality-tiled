@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Tilety.core</name>
+    </assembly>
+    <members>
+        <member name="T:Tilety.Core.Tilety">
+            <summary>
+            Defines a Duality core plugin.
+            </summary>
+        </member>
+        <member name="M:Tilety.Core.Extensions.StringExtensions.CapitalizeFirstLetter(System.String)">
+            <summary>
+            Capitalizes/uppercases the first letter of the specified string.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMapOrientation.ORTHOGONAL">
+            <summary>
+            Orthogonal
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMapOrientation.ISOMETRIC">
+            <summary>
+            Isometric
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMapOrientation.STAGGERED">
+            <summary>
+            Staggered
+            </summary>
+        </member>
+        <member name="T:Tilety.Core.TmxMap">
+            <summary>
+            Defines a Tiled map file (.tmx) resource to be used with Duality.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.Version">
+            <summary>
+            The TMX format version, generally 1.0.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.Orientation">
+            <summary>
+            Map orientation. 
+            Tiled supports "orthogonal", "isometric" and "staggered" (since 0.9) at the moment.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.Width">
+            <summary>
+            The map width in tiles.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.Height">
+            <summary>
+            The map height in tiles.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.TileWidth">
+            <summary>
+            The width of a tile.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.TileHeight">
+            <summary>
+            The height of a tile.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.BackgroundColor">
+            <summary>
+            The background color of the map.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.RenderOrder">
+            <summary>
+            The order in which tiles on tile layers are rendered. 
+            Valid values are right-down (the default), right-up, left-down and left-up.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.LayerFormat">
+            <summary>
+            The encoding used to encode the tile layer data.
+            </summary>
+        </member>
+        <member name="F:Tilety.Core.TmxMap.Properties">
+            <summary>
+            Wraps any number of custom properties. 
+            Can be used as a child of the map, tile (when part of a tileset), layer, objectgroup and object elements.
+            </summary>
+        </member>
+        <member name="M:Tilety.Core.TmxMap.LoadMapData(System.String)">
+            <summary>
+            Load map data into a map resource file.
+            </summary>
+        </member>
+    </members>
+</doc>
