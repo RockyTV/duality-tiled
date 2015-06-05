@@ -4,6 +4,7 @@ using System.Xml;
 using System.Linq;
 using System.Text;
 using System.Xml.Linq;
+using System.Windows.Forms;
 using System.Collections.Generic;
 
 using Duality;
@@ -77,6 +78,7 @@ namespace Tilety.Core
         public void LoadMapData(string srcFile)
         {
             Log.Editor.Write("Importing file " + srcFile);
+            Log.Editor.Write("Source: {0}", System.IO.Path.GetDirectoryName(srcFile));
 
             using (FileStream fs = File.Open(srcFile, FileMode.Open, FileAccess.ReadWrite))
             {
@@ -134,10 +136,32 @@ namespace Tilety.Core
                                 TmxTileset tmxTileset = new TmxTileset();
                                 tmxTileset.Name = descendantNode.GetAttributeValue("name");
 
-                                string imgFileRelativePath = descendantNode.GetElementValue("image");
-                                string sourceFilePath = System.IO.Path.GetDirectoryName(srcFile);
+                                // Since Duality does not let me get the original path for the imported file
+                                // we create a dialog for the user let us know where the tileset images are located at.
+                                XElement imageElement = descendantNode.Element("image");
+                                if (imageElement != null)
+                                {
+                                    OpenFileDialog ofd = new OpenFileDialog();
+                                    ofd.CheckFileExists = true;
+                                    ofd.CheckPathExists = true;
+                                    ofd.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.gif, *.png, *.bmp) | *.jpg; *.jpeg; *.jpe; *.gif; *.png; *.bmp" ;
+                                    ofd.Title = "Import tileset image";
+                                    ofd.Multiselect = false;
+                                    ofd.InitialDirectory = imageElement.GetAttributeValue("source");
+                                    ofd.FileName = imageElement.GetAttributeValue("source");
+                                    DialogResult dialogResult = ofd.ShowDialog();
 
-                                Log.Editor.Write(System.IO.Path.GetFullPath(System.IO.Path.Combine(sourceFilePath, imgFileRelativePath)));
+                                    if (dialogResult == DialogResult.OK)
+                                    {
+                                        string ofdFile = ofd.FileName;
+                                        FileInfo imageFileInfo = new FileInfo(ofdFile);
+                                        tmxTileset.Image = new Pixmap(imageFileInfo.FullName);
+                                    }
+                                    else
+                                    {
+                                        tmxTileset.Image = null;
+                                    }
+                                }
 
                                 int outInt;
 

@@ -44,6 +44,7 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.XML" />
     <Reference Include="System.Xml.Linq" />
   </ItemGroup>
@@ -52,6 +53,7 @@
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="TmxComponent.cs" />
     <Compile Include="TmxFile\TmxEnums.cs" />
+    <Compile Include="TmxFile\TmxImage.cs" />
     <Compile Include="TmxFile\TmxLayer.cs" />
     <Compile Include="TmxFile\TmxResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

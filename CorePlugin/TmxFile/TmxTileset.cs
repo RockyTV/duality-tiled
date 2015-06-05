@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 
 using Duality.Resources;
+using Duality;
 
 namespace Tilety.Core
 {
