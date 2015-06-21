@@ -29,7 +29,8 @@ namespace Tilety.Core
         /// <summary>
         /// The TMX format version, generally 1.0.
         /// </summary>
-        public readonly float Version = 1.0f;
+        [EditorHintFlags(MemberFlags.ReadOnly)]
+        public readonly float Version = 1f;
         /// <summary>
         /// Map orientation. 
         /// Tiled supports "orthogonal", "isometric" and "staggered" (since 0.9) at the moment.
@@ -117,97 +118,54 @@ namespace Tilety.Core
                         if (int.TryParse(bgColorHex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out outHex))
                             this.BackgroundColor = new ColorRgba(outHex);
 
+                        TmxTileset tmxTileset = null;
+                        TmxLayer tmxLayer = null;
 
-                        // Parsing properties
+                        OpenFileDialog ofd = null;
+
+                        // Parsing child elements
                         foreach (XElement descendantNode in mapNode.Descendants())
                         {
-                            // Map properties
-                            if (descendantNode.Name == "properties" && descendantNode.Parent == mapNode)
-                            {
-                                foreach (XElement propertyElem in descendantNode.Descendants())
-                                {
-                                    this.Properties.Add(propertyElem.GetAttributeValue("name"), propertyElem.GetAttributeValue("value"));
-                                }
-                            }
-
                             // Tileset
                             if (descendantNode.Name == "tileset" && descendantNode.Parent == mapNode)
                             {
-                                TmxTileset tmxTileset = new TmxTileset();
-                                tmxTileset.Name = descendantNode.GetAttributeValue("name");
-
-                                // Since Duality does not let me get the original path for the imported file
-                                // we create a dialog for the user let us know where the tileset images are located at.
-                                XElement imageElement = descendantNode.Element("image");
-                                if (imageElement != null)
+                                // Check if the tileset is defined in an external file.
+                                // If it is, we parse the file.
+                                if (descendantNode.GetAttributeValue("source") != null)
                                 {
-                                    OpenFileDialog ofd = new OpenFileDialog();
+                                    ofd = new OpenFileDialog();
                                     ofd.CheckFileExists = true;
                                     ofd.CheckPathExists = true;
-                                    ofd.Filter = "Image files (*.jpg, *.jpeg, *.jpe, *.gif, *.png, *.bmp) | *.jpg; *.jpeg; *.jpe; *.gif; *.png; *.bmp" ;
-                                    ofd.Title = "Import tileset image";
+                                    ofd.Filter = "Tile Set XML files (*.tsx) | *.tsx";
+                                    ofd.Title = "Import tileset TSX file";
                                     ofd.Multiselect = false;
-                                    ofd.InitialDirectory = imageElement.GetAttributeValue("source");
-                                    ofd.FileName = imageElement.GetAttributeValue("source");
+                                    ofd.InitialDirectory = descendantNode.GetAttributeValue("source");
+                                    ofd.FileName = descendantNode.GetAttributeValue("source");
                                     DialogResult dialogResult = ofd.ShowDialog();
 
                                     if (dialogResult == DialogResult.OK)
                                     {
                                         string ofdFile = ofd.FileName;
-                                        FileInfo imageFileInfo = new FileInfo(ofdFile);
-                                        tmxTileset.Image = new Pixmap(imageFileInfo.FullName);
-                                    }
-                                    else
-                                    {
-                                        tmxTileset.Image = null;
-                                    }
-                                }
-
-                                int outInt;
-
-                                if (int.TryParse(descendantNode.GetAttributeValue("firstgid"), out outInt))
-                                    tmxTileset.FirstGlobalID = outInt;
-                                if (int.TryParse(descendantNode.GetAttributeValue("tilewidth"), out outInt))
-                                    tmxTileset.TileWidth = outInt;
-                                if (int.TryParse(descendantNode.GetAttributeValue("tileheight"), out outInt))
-                                    tmxTileset.TileHeight = outInt;
-
-                                foreach (XElement childElement in descendantNode.Descendants())
-                                {
-                                    if (childElement.Name == "terraintypes")
-                                    {
-                                        foreach (XElement terrainElement in childElement.Descendants())
+                                        using (FileStream tsxStream = File.Open(ofdFile, FileMode.Open, FileAccess.ReadWrite))
                                         {
-                                            TmxTerrain tmxTerrain = new TmxTerrain();
-                                            tmxTerrain.Name = terrainElement.GetAttributeValue("name");
-
-                                            int tryParseInt;
-                                            if (int.TryParse(terrainElement.GetAttributeValue("tile"), out tryParseInt))
-                                                tmxTerrain.TileID = tryParseInt;
-
-                                            tmxTileset.TerrainTypes.Add(tmxTerrain);
+                                            XDocument tsxDoc = XDocument.Load(tsxStream);
+                                            tmxTileset = TmxTileset.FromXml(tsxDoc);
+                                            tmxTileset.Source = ofdFile;
                                         }
                                     }
-
-                                    if (childElement.Name == "tile")
-                                    {
-                                        TmxTilesetTile tmxTilesetTile = new TmxTilesetTile();
-
-                                        int tryParseInt;
-                                        if (int.TryParse(childElement.GetAttributeValue("id"), out tryParseInt))
-                                            tmxTilesetTile.ID = tryParseInt;
-
-                                        tmxTileset.Tiles.Add(tmxTilesetTile);
-                                    }
                                 }
-
+                                else
+                                {
+                                    tmxTileset = TmxTileset.FromXml(xmlDoc);
+                                    tmxTileset.Source = srcFile;
+                                }
                                 this.Tilesets.Add(tmxTileset);
                             }
 
                             // Layer
                             if (descendantNode.Name == "layer" && descendantNode.Parent == mapNode)
                             {
-                                TmxLayer tmxLayer = new TmxLayer();
+                                tmxLayer = new TmxLayer();
                                 tmxLayer.Name = descendantNode.GetAttributeValue("name");
                                 XElement dataElement = descendantNode.Descendants("data").FirstOrDefault();
 
@@ -228,6 +186,37 @@ namespace Tilety.Core
                                 tmxLayer.Data.Compression = compression;
 
                                 this.Layers.Add(tmxLayer);
+                            }
+
+                            // Properties
+                            if (descendantNode.Name == "properties")
+                            {
+                                switch (descendantNode.Parent.Name.ToString())
+                                {
+                                    case "map":
+                                        foreach (XElement propertyElem in descendantNode.Descendants())
+                                        {
+                                            this.Properties.Add(propertyElem.GetAttributeValue("name"), propertyElem.GetAttributeValue("value"));
+                                        }
+                                        break;
+                                    case "layer":
+                                        if (tmxLayer != null)
+                                        {
+                                            foreach (XElement propertyElem in descendantNode.Descendants())
+                                            {
+                                                tmxLayer.Properties.Add(propertyElem.GetAttributeValue("name"), propertyElem.GetAttributeValue("value"));
+                                            }
+                                        }
+                                        break;
+                                    /*case "objectgroup": // not yet implemented
+                                        break;
+                                    case "object":
+                                        break;
+                                    case "imagelayer":
+                                        break;*/
+                                    default:
+                                        break;
+                                }
                             }
                         }
                     }

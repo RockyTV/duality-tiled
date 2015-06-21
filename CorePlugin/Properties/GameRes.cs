@@ -12,9 +12,16 @@ namespace GameRes
 				duality_test_map_TmxMap.MakeAvailable();
 			}
 		}
+		public static class test_map {
+			public static Duality.ContentRef<Tilety.Core.TmxMap> test_TmxMap { get { return Duality.ContentProvider.RequestContent<Tilety.Core.TmxMap>(@"Data\test.map\test.TmxMap.res"); }}
+			public static void LoadAll() {
+				test_TmxMap.MakeAvailable();
+			}
+		}
 		public static Duality.ContentRef<Duality.Resources.Scene> Scene_Scene { get { return Duality.ContentProvider.RequestContent<Duality.Resources.Scene>(@"Data\Scene.Scene.res"); }}
 		public static void LoadAll() {
 			duality_test_map_map.LoadAll();
+			test_map.LoadAll();
 			Scene_Scene.MakeAvailable();
 		}
 	}
