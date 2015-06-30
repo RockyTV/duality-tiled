@@ -4,9 +4,9 @@ using Duality;
 using Duality.Editor;
 using Duality.Resources;
 
-using Tilety.Core;
+using DualityTiled.Core;
 
-namespace Tilety.Editor
+namespace DualityTiled.Editor
 {
     public class TmxFileImporter : IFileImporter
     {

@@ -7,7 +7,7 @@ using Duality;
 using Duality.Editor;
 using Duality.Properties;
 
-namespace Tilety.Core
+namespace DualityTiled.Core
 {
     [Serializable]
     [RequiredComponent(typeof(TmxMap))]

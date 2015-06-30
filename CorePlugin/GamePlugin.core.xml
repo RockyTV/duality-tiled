@@ -1,149 +1,149 @@
 <?xml version="1.0"?>
 <doc>
     <assembly>
-        <name>Tilety.core</name>
+        <name>DualityTiled.Core</name>
     </assembly>
     <members>
-        <member name="T:Tilety.Core.Tilety">
+        <member name="T:DualityTiled.Core.DualityTiled">
             <summary>
             Defines a Duality core plugin.
             </summary>
         </member>
-        <member name="M:Tilety.Core.Extensions.StringExtensions.CapitalizeFirstLetter(System.String)">
+        <member name="M:DualityTiled.Extensions.StringExtensions.CapitalizeFirstLetter(System.String)">
             <summary>
             Capitalizes/uppercases the first letter of the specified string.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMapOrientation.ORTHOGONAL">
+        <member name="F:DualityTiled.Core.TmxMapOrientation.ORTHOGONAL">
             <summary>
             Orthogonal
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMapOrientation.ISOMETRIC">
+        <member name="F:DualityTiled.Core.TmxMapOrientation.ISOMETRIC">
             <summary>
             Isometric
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMapOrientation.STAGGERED">
+        <member name="F:DualityTiled.Core.TmxMapOrientation.STAGGERED">
             <summary>
             Staggered
             </summary>
         </member>
-        <member name="T:Tilety.Core.TmxMap">
+        <member name="T:DualityTiled.Core.TmxMap">
             <summary>
             Defines a Tiled map file (.tmx) resource to be used with Duality.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.Version">
+        <member name="F:DualityTiled.Core.TmxMap.Version">
             <summary>
             The TMX format version, generally 1.0.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.Orientation">
+        <member name="F:DualityTiled.Core.TmxMap.Orientation">
             <summary>
             Map orientation. 
             Tiled supports "orthogonal", "isometric" and "staggered" (since 0.9) at the moment.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.Width">
+        <member name="F:DualityTiled.Core.TmxMap.Width">
             <summary>
             The map width in tiles.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.Height">
+        <member name="F:DualityTiled.Core.TmxMap.Height">
             <summary>
             The map height in tiles.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.TileWidth">
+        <member name="F:DualityTiled.Core.TmxMap.TileWidth">
             <summary>
             The width of a tile.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.TileHeight">
+        <member name="F:DualityTiled.Core.TmxMap.TileHeight">
             <summary>
             The height of a tile.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.BackgroundColor">
+        <member name="F:DualityTiled.Core.TmxMap.BackgroundColor">
             <summary>
             The background color of the map.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.RenderOrder">
+        <member name="F:DualityTiled.Core.TmxMap.RenderOrder">
             <summary>
             The order in which tiles on tile layers are rendered. 
             Valid values are right-down (the default), right-up, left-down and left-up.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.LayerFormat">
+        <member name="F:DualityTiled.Core.TmxMap.LayerFormat">
             <summary>
             The encoding used to encode the tile layer data.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxMap.Properties">
+        <member name="F:DualityTiled.Core.TmxMap.Properties">
             <summary>
             Wraps any number of custom properties. 
             Can be used as a child of the map, tile (when part of a tileset), layer, objectgroup and object elements.
             </summary>
         </member>
-        <member name="M:Tilety.Core.TmxMap.LoadMapData(System.String)">
+        <member name="M:DualityTiled.Core.TmxMap.LoadMapData(System.String)">
             <summary>
             Load map data into a map resource file.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.FirstGlobalID">
+        <member name="F:DualityTiled.Core.TmxTileset.FirstGlobalID">
             <summary>
             The first global tile ID of this tileset (this global ID maps to the first tile in this tileset).
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.Source">
+        <member name="F:DualityTiled.Core.TmxTileset.Source">
             <summary>
             If this tileset is stored in an external TSX (Tile Set XML) file, this attribute refers to that file.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.Name">
+        <member name="F:DualityTiled.Core.TmxTileset.Name">
             <summary>
             The name of this tileset.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.TileWidth">
+        <member name="F:DualityTiled.Core.TmxTileset.TileWidth">
             <summary>
             The (maximum) width of the tiles in this tileset.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.TileHeight">
+        <member name="F:DualityTiled.Core.TmxTileset.TileHeight">
             <summary>
             The (maximum) height of the tiles in this tileset.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.Spacing">
+        <member name="F:DualityTiled.Core.TmxTileset.Spacing">
             <summary>
             The spacing in pixels between the tiles in this tileset (applies to the tileset image).
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.Margin">
+        <member name="F:DualityTiled.Core.TmxTileset.Margin">
             <summary>
             The margin around the tiles in this tileset (applies to the tileset image).
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.TileOffset">
+        <member name="F:DualityTiled.Core.TmxTileset.TileOffset">
             <summary>
             Used to specify an offset in pixels, to be applied when drawing a tile from the related tileset. When not present, no offset is applied.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.Properties">
+        <member name="F:DualityTiled.Core.TmxTileset.Properties">
             <summary>
             Wraps any number of custom properties. 
             Can be used as a child of the map, tile (when part of a tileset), layer, objectgroup and object elements.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.Image">
+        <member name="F:DualityTiled.Core.TmxTileset.Image">
             <summary>
             Each tileset has a single image associated with it, which is cut into smaller tiles based on the attributes defined on the tileset element.
             </summary>
         </member>
-        <member name="F:Tilety.Core.TmxTileset.TerrainTypes">
+        <member name="F:DualityTiled.Core.TmxTileset.TerrainTypes">
             <summary>
             Defines an array of terrain types.
             </summary>

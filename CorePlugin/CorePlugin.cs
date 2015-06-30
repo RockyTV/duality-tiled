@@ -5,12 +5,12 @@ using System.Text;
 
 using Duality;
 
-namespace Tilety.Core
+namespace DualityTiled.Core
 {
 	/// <summary>
 	/// Defines a Duality core plugin.
 	/// </summary>
-    public class Tilety : CorePlugin
+    public class DualityTiled : CorePlugin
     {
 		// Override methods here for global logic
     }

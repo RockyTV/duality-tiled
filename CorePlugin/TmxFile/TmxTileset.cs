@@ -12,7 +12,7 @@ using Duality.Editor;
 using System.IO;
 
 
-namespace Tilety.Core
+namespace DualityTiled.Core
 {
     [Serializable]
     [EditorHintFlags(MemberFlags.AffectsOthers)]

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Tilety.Core
+namespace DualityTiled.Core
 {
     public enum TmxMapOrientation : int
     {

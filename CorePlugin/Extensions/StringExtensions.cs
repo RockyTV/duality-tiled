@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace Tilety.Core.Extensions
+namespace DualityTiled.Extensions
 {
     public static class StringExtensions
     {

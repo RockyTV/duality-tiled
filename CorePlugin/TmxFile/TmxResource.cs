@@ -13,9 +13,7 @@ using Duality.Drawing;
 using Duality.Resources;
 using Duality.Properties;
 
-using Tilety.Core.Extensions;
-
-namespace Tilety.Core
+namespace DualityTiled.Core
 {
     /// <summary>
     /// Defines a Tiled map file (.tmx) resource to be used with Duality.
@@ -109,14 +107,17 @@ namespace Tilety.Core
                         if (Enum.TryParse(mapNode.GetAttributeValue("renderorder").ToUpperInvariant().Replace("-", "_"), out renderOrder))
                             this.RenderOrder = renderOrder;
 
-                        // Substring it so we don't include the hashtag.
-                        string bgColorHex = mapNode.GetAttributeValue("backgroundcolor").Substring(1) + "FF";
+                        if (mapNode.GetAttributeValue("backgroundcolor") != null)
+                        {
+                            // Substring it so we don't include the hashtag.
+                            string bgColorHex = mapNode.GetAttributeValue("backgroundcolor").Substring(1) + "FF";
 
-                        // Hacky way to parse HEX colors
-                        int outHex;
+                            // Hacky way to parse HEX colors
+                            int outHex;
 
-                        if (int.TryParse(bgColorHex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out outHex))
-                            this.BackgroundColor = new ColorRgba(outHex);
+                            if (int.TryParse(bgColorHex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out outHex))
+                                this.BackgroundColor = new ColorRgba(outHex);
+                        }
 
                         TmxTileset tmxTileset = null;
                         TmxLayer tmxLayer = null;
@@ -159,32 +160,15 @@ namespace Tilety.Core
                                     tmxTileset = TmxTileset.FromXml(xmlDoc);
                                     tmxTileset.Source = srcFile;
                                 }
+                                tmxTileset.Image.AnimCols = tmxTileset.Image.Width / this.TileWidth;
+                                tmxTileset.Image.AnimRows = tmxTileset.Image.Height / this.TileHeight;
                                 this.Tilesets.Add(tmxTileset);
                             }
 
                             // Layer
                             if (descendantNode.Name == "layer" && descendantNode.Parent == mapNode)
                             {
-                                tmxLayer = new TmxLayer();
-                                tmxLayer.Name = descendantNode.GetAttributeValue("name");
-                                XElement dataElement = descendantNode.Descendants("data").FirstOrDefault();
-
-                                TmxLayerEncoding encoding;
-                                TmxBase64Compression compression = TmxBase64Compression.None;
-
-                                if (Enum.TryParse(dataElement.GetAttributeValue("encoding").CapitalizeFirstLetter(), out encoding))
-                                {
-                                    tmxLayer.Data.Encoding = encoding;
-                                    this.LayerFormat = encoding;
-                                }
-
-                                if (dataElement.Attribute("compression") != null)
-                                {
-                                    if (Enum.TryParse(dataElement.GetAttributeValue("compression").CapitalizeFirstLetter(), out compression))
-                                        tmxLayer.Data.Compression = compression;
-                                }
-                                tmxLayer.Data.Compression = compression;
-
+                                tmxLayer = TmxLayer.FromXmlElement(descendantNode);
                                 this.Layers.Add(tmxLayer);
                             }
 

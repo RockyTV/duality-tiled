@@ -5,7 +5,7 @@ using System.Text;
 
 using Duality.Editor;
 
-namespace Tilety
+namespace DualityTiled.Editor
 {
 	/// <summary>
 	/// Defines a Duality editor plugin.
@@ -14,7 +14,7 @@ namespace Tilety
 	{
 		public override string Id
 		{
-			get { return "Tilety"; }
+			get { return "DualityTiled"; }
 		}
 
         protected override void LoadPlugin()
