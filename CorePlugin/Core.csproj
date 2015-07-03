@@ -52,6 +52,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="CorePlugin.cs" />
+    <Compile Include="Extensions\ColorRgbaExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="TmxComponent.cs" />
     <Compile Include="TmxFile\TmxEnums.cs" />

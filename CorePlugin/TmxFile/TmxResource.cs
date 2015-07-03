@@ -7,6 +7,10 @@ using System.Xml.Linq;
 using System.Windows.Forms;
 using System.Collections.Generic;
 
+using System.Xml.Serialization;
+
+using DualityTiled.Extensions;
+
 using Duality;
 using Duality.Editor;
 using Duality.Drawing;
@@ -63,6 +67,7 @@ namespace DualityTiled.Core
         /// The encoding used to encode the tile layer data.
         /// </summary>
         public TmxLayerEncoding LayerFormat = TmxLayerEncoding.Xml;
+        public int NextObjectID = 1;
         /// <summary>
         /// Wraps any number of custom properties. 
         /// Can be used as a child of the map, tile (when part of a tileset), layer, objectgroup and object elements.
@@ -98,6 +103,8 @@ namespace DualityTiled.Core
                             this.TileWidth = tryParse;
                         if (int.TryParse(mapNode.GetAttributeValue("tileheight"), out tryParse))
                             this.TileHeight = tryParse;
+                        if (int.TryParse(mapNode.GetAttributeValue("nextobjectid"), out tryParse))
+                            this.NextObjectID = tryParse;
 
                         TmxMapOrientation orientation;
                         TmxTileRenderOrder renderOrder;
@@ -205,6 +212,75 @@ namespace DualityTiled.Core
                         }
                     }
                 }
+            }
+        }
+        public void SaveMapData(string destFile)
+        {
+            Log.Editor.Write("Saving map data to '{0}'", destFile);
+
+            using (FileStream fs = File.Create(destFile))
+            {
+                StreamWriter sw = new StreamWriter(fs);
+
+                XDocument xmlDoc = new XDocument();
+
+                XElement mapElement = new XElement("map");
+                mapElement.SetAttributeValue("version", this.Version);
+                mapElement.SetAttributeValue("orientation", this.Orientation.ToString().ToLowerInvariant());
+                mapElement.SetAttributeValue("renderorder", this.RenderOrder.ToString().ToLowerInvariant().Replace("_", "-")); // Tiled uses hyphens instead of underlines
+                mapElement.SetAttributeValue("width", this.Width);
+                mapElement.SetAttributeValue("height", this.Height);
+                mapElement.SetAttributeValue("tilewidth", this.TileWidth);
+                mapElement.SetAttributeValue("tileheight", this.TileHeight);
+                mapElement.SetAttributeValue("backgroundcolor", this.BackgroundColor.ToTiledHexString());
+                mapElement.SetAttributeValue("nextobjectid", this.NextObjectID);
+                xmlDoc.Add(mapElement);
+
+                XElement propertiesElement = new XElement("properties");
+                foreach (KeyValuePair<string, string> property in this.Properties)
+                {
+                    XElement propertyElement = new XElement("property");
+                    propertyElement.SetAttributeValue("name", property.Key);
+                    propertyElement.SetAttributeValue("value", property.Value);
+
+                    propertiesElement.Add(propertyElement);
+                }
+                mapElement.Add(propertiesElement);
+
+                foreach (TmxTileset tmxTileset in this.Tilesets)
+                {
+                    XElement tilesetElement = new XElement("tileset");
+                    tilesetElement.SetAttributeValue("firstgid", tmxTileset.FirstGlobalID);
+                    if (System.IO.Path.GetExtension(tmxTileset.Source) == ".tsx")
+                        tilesetElement.SetAttributeValue("source", tmxTileset.Source.Replace(@"\", "/"));
+                    else
+                    {
+                        tilesetElement.SetAttributeValue("name", tmxTileset.Name);
+                        tilesetElement.SetAttributeValue("tilewidth", this.TileWidth);
+                        tilesetElement.SetAttributeValue("tileheight", this.TileHeight);
+                        XElement imgElement = new XElement("image");
+                        imgElement.SetAttributeValue("source", tmxTileset.Image.SourcePath.Replace(@"\", "/"));
+                        imgElement.SetAttributeValue("width", tmxTileset.Image.Width);
+                        imgElement.SetAttributeValue("height", tmxTileset.Image.Height);
+
+                        propertiesElement = new XElement("properties");
+                        foreach (KeyValuePair<string, string> property in tmxTileset.Properties)
+                        {
+                            XElement propertyElement = new XElement("property");
+                            propertyElement.SetAttributeValue("name", property.Key);
+                            propertyElement.SetAttributeValue("value", property.Value);
+
+                            propertiesElement.Add(propertyElement);
+                        }
+
+                        tilesetElement.Add(imgElement);
+                        tilesetElement.Add(propertiesElement);
+                    }
+
+                    mapElement.Add(tilesetElement);
+                }
+
+                xmlDoc.Save(sw.BaseStream);
             }
         }
     }
