@@ -8,7 +8,7 @@
     <ProjectGuid>{78DBC94D-EE9D-4AC0-95ED-91A0AE2F6652}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DualityTiled.editor</RootNamespace>
+    <RootNamespace>DualityTiled.Editor</RootNamespace>
     <AssemblyName>DualityTiled.editor</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

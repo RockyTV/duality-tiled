@@ -10,10 +10,12 @@ namespace DualityTiled.Editor
 {
     public class TmxFileImporter : IFileImporter
     {
+        public static readonly string SourceFileExtPrimary = ".tmx";
+
         public bool CanImportFile(string srcFile)
         {
             string extension = Path.GetExtension(srcFile).ToLower();
-            return extension == ".tmx";
+            return extension == SourceFileExtPrimary;
         }
 
         public bool CanReImportFile(ContentRef<Resource> r, string srcFile)

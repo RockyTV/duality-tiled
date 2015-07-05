@@ -14,6 +14,37 @@
             Capitalizes/uppercases the first letter of the specified string.
             </summary>
         </member>
+        <member name="T:DualityTiled.Core.Properties.TiledRes">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:DualityTiled.Core.Properties.TiledRes.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:DualityTiled.Core.Properties.TiledRes.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:DualityTiled.Core.Properties.TiledRes.ActionDesc_OpenResourceExternal">
+            <summary>
+              Looks up a localized string similar to Open Resource in external editor..
+            </summary>
+        </member>
+        <member name="P:DualityTiled.Core.Properties.TiledRes.IconResTmxMap">
+            <summary>
+              Looks up a localized resource of type System.Drawing.Bitmap.
+            </summary>
+        </member>
+        <member name="T:DualityTiled.Core.Properties.TiledResNames">
+            <summary>
+            This static class contains constant string representations of certain <see cref="!:DualityTiled.Core.Properties.TiledRes"/> resource entries.
+            </summary>
+        </member>
         <member name="F:DualityTiled.Core.TmxMapOrientation.ORTHOGONAL">
             <summary>
             Orthogonal
@@ -91,6 +122,12 @@
             <summary>
             Load map data into a map resource file.
             </summary>
+        </member>
+        <member name="M:DualityTiled.Core.TmxMap.SaveMapData(System.String)">
+            <summary>
+            Save map data into a Tiled Map File (.tmx)
+            </summary>
+            <param name="destFile">The path of the file you want to save the map data to.</param>
         </member>
         <member name="F:DualityTiled.Core.TmxTileset.FirstGlobalID">
             <summary>

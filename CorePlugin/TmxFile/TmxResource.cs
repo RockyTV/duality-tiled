@@ -9,6 +9,7 @@ using System.Collections.Generic;
 
 using System.Xml.Serialization;
 
+using DualityTiled.Core.Properties;
 using DualityTiled.Extensions;
 
 using Duality;
@@ -24,6 +25,7 @@ namespace DualityTiled.Core
     /// </summary>
     [Serializable]
     [ExplicitResourceReference()]
+    [EditorHintImage(typeof(TiledRes), TiledResNames.ImageMap)]
     [EditorHintCategory(typeof(CoreRes), "Tiled")]
     public class TmxMap : Resource
     {
@@ -79,12 +81,21 @@ namespace DualityTiled.Core
         /// <summary>
         /// Load map data into a map resource file.
         /// </summary>
-        public void LoadMapData(string srcFile)
+        public void LoadMapData(string srcFile = null)
         {
+            if (srcFile == null) srcFile = this.sourcePath;
+
             Log.Editor.Write("Importing file " + srcFile);
             Log.Editor.Write("Source: {0}", System.IO.Path.GetDirectoryName(srcFile));
 
-            using (FileStream fs = File.Open(srcFile, FileMode.Open, FileAccess.ReadWrite))
+            this.Properties.Clear();
+
+            TmxTileset tmxTileset = null;
+            TmxLayer tmxLayer = null;
+
+            OpenFileDialog ofd = null;
+
+            using (FileStream fs = File.Open(srcFile, FileMode.Open, FileAccess.Read))
             {
                 StreamReader sr = new StreamReader(fs);
 
@@ -125,11 +136,6 @@ namespace DualityTiled.Core
                             if (int.TryParse(bgColorHex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out outHex))
                                 this.BackgroundColor = new ColorRgba(outHex);
                         }
-
-                        TmxTileset tmxTileset = null;
-                        TmxLayer tmxLayer = null;
-
-                        OpenFileDialog ofd = null;
 
                         // Parsing child elements
                         foreach (XElement descendantNode in mapNode.Descendants())
@@ -218,8 +224,9 @@ namespace DualityTiled.Core
         /// Save map data into a Tiled Map File (.tmx)
         /// </summary>
         /// <param name="destFile">The path of the file you want to save the map data to.</param>
-        public void SaveMapData(string destFile)
+        public void SaveMapData(string destFile = null)
         {
+            if (destFile == null) destFile = this.sourcePath;
             Log.Editor.Write("Saving map data to '{0}'", destFile);
 
             using (FileStream fs = File.Create(destFile))

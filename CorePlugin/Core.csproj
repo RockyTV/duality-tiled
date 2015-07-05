@@ -8,7 +8,7 @@
     <ProjectGuid>{AFE883F3-72B4-4C7C-A1D1-44EDC09C8F6E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DualityTiled.core</RootNamespace>
+    <RootNamespace>DualityTiled.Core</RootNamespace>
     <AssemblyName>DualityTiled.core</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -54,6 +54,12 @@
     <Compile Include="CorePlugin.cs" />
     <Compile Include="Extensions\ColorRgbaExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Properties\TiledRes.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>TiledRes.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\TiledResNames.cs" />
     <Compile Include="TmxComponent.cs" />
     <Compile Include="TmxFile\TmxEnums.cs" />
     <Compile Include="TmxFile\TmxLayer.cs" />
@@ -62,6 +68,15 @@
     <Compile Include="TmxFile\TmxTerrain.cs" />
     <Compile Include="TmxFile\TmxTile.cs" />
     <Compile Include="TmxFile\TmxTileset.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Properties\TiledRes.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>TiledRes.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="EmbeddedResources\IconResTmxMap.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
