@@ -8,8 +8,8 @@
     <ProjectGuid>{78DBC94D-EE9D-4AC0-95ED-91A0AE2F6652}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DualityTiled.Editor</RootNamespace>
-    <AssemblyName>DualityTiled.Editor</AssemblyName>
+    <RootNamespace>DualityTiled.editor</RootNamespace>
+    <AssemblyName>DualityTiled.editor</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -63,7 +63,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorPlugin.cs" />
-    <Compile Include="PluginGlobals.cs" />
+    <Compile Include="PluginUserData.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TmxEditorAction.cs" />
     <Compile Include="TmxFileImporter.cs" />

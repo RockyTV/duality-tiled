@@ -214,6 +214,10 @@ namespace DualityTiled.Core
                 }
             }
         }
+        /// <summary>
+        /// Save map data into a Tiled Map File (.tmx)
+        /// </summary>
+        /// <param name="destFile">The path of the file you want to save the map data to.</param>
         public void SaveMapData(string destFile)
         {
             Log.Editor.Write("Saving map data to '{0}'", destFile);

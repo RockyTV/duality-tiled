@@ -7,14 +7,30 @@ using System.IO;
 using Microsoft.Win32;
 
 using Duality.Editor;
+using Duality.Serialization;
 
 namespace DualityTiled.Editor
 {
 	/// <summary>
 	/// Defines a Duality editor plugin.
 	/// </summary>
-    public class Main : EditorPlugin
+    public class DualityTiled : EditorPlugin
 	{
+        private static DualityTiled singleton = new DualityTiled();
+        public static DualityTiled fetch
+        {
+            get { return singleton; }
+        }
+
+        private string userDataPath = Path.Combine(Environment.CurrentDirectory, "DualityTiled.dat");
+
+        private PluginUserData userData = null;
+        public PluginUserData UserData
+        {
+            get { return this.userData; }
+            set { this.userData = value ?? new PluginUserData(); }
+        }
+
 		public override string Id
 		{
 			get { return "DualityTiled"; }
@@ -23,27 +39,24 @@ namespace DualityTiled.Editor
         protected override void LoadPlugin()
         {
             base.LoadPlugin();
-            PluginGlobals.TiledLocation = this.GetTiledLocationFromRegistry();
 
+            this.LoadUserData();
         }
 
-        private string GetTiledLocationFromRegistry()
+        protected override void SaveUserData(System.Xml.Linq.XElement node)
         {
-            // Since Duality does not support other OSes, we will only retrieve Tiled's location if the current OS is Windows.
-            if (Environment.OSVersion.Platform != (PlatformID.Unix | PlatformID.MacOSX | PlatformID.Xbox))
-            {
-                bool x64 = Environment.Is64BitOperatingSystem;
-                string installPath = "";
+            base.SaveUserData(node);
+            this.SaveUserData();
+        }
 
-                if (x64)
-                    installPath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Tiled", "DisplayIcon", "");
-                else
-                    installPath = (string)Registry.GetValue(@"HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Tiled", "DisplayIcon", "");
+        private void SaveUserData()
+        {
+            Formatter.WriteObject(this.userData, this.userDataPath, FormattingMethod.Xml);
+        }
 
-                installPath = Path.Combine(installPath.Substring(0, installPath.IndexOf(Path.GetFileName(installPath))), "tiled.exe");
-                return installPath;
-            }
-            return null;
+        private void LoadUserData()
+        {
+            this.userData = Formatter.TryReadObject<PluginUserData>(this.userDataPath) ?? new PluginUserData();
         }
 	}
 }
