@@ -63,7 +63,7 @@
     <Compile Include="TmxComponent.cs" />
     <Compile Include="TmxFile\TmxEnums.cs" />
     <Compile Include="TmxFile\TmxLayer.cs" />
-    <Compile Include="TmxFile\TmxResource.cs" />
+    <Compile Include="TmxResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TmxFile\TmxTerrain.cs" />
     <Compile Include="TmxFile\TmxTile.cs" />

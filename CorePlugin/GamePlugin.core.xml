@@ -9,11 +9,6 @@
             Defines a Duality core plugin.
             </summary>
         </member>
-        <member name="M:DualityTiled.Extensions.StringExtensions.CapitalizeFirstLetter(System.String)">
-            <summary>
-            Capitalizes/uppercases the first letter of the specified string.
-            </summary>
-        </member>
         <member name="T:DualityTiled.Core.Properties.TiledRes">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
@@ -30,7 +25,7 @@
               resource lookups using this strongly typed resource class.
             </summary>
         </member>
-        <member name="P:DualityTiled.Core.Properties.TiledRes.ActionDesc_OpenResourceExternal">
+        <member name="P:DualityTiled.Core.Properties.TiledRes.ActionDesc_OpenTmxMapExternal">
             <summary>
               Looks up a localized string similar to Open Resource in external editor..
             </summary>
@@ -183,6 +178,11 @@
         <member name="F:DualityTiled.Core.TmxTileset.TerrainTypes">
             <summary>
             Defines an array of terrain types.
+            </summary>
+        </member>
+        <member name="M:DualityTiled.Extensions.StringExtensions.CapitalizeFirstLetter(System.String)">
+            <summary>
+            Capitalizes/uppercases the first letter of the specified string.
             </summary>
         </member>
     </members>

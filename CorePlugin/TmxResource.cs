@@ -85,134 +85,140 @@ namespace DualityTiled.Core
         {
             if (srcFile == null) srcFile = this.sourcePath;
 
-            Log.Editor.Write("Importing file " + srcFile);
-            Log.Editor.Write("Source: {0}", System.IO.Path.GetDirectoryName(srcFile));
-
+            this.Tilesets.Clear();
+            this.Layers.Clear();
             this.Properties.Clear();
 
             TmxTileset tmxTileset = null;
             TmxLayer tmxLayer = null;
-
             OpenFileDialog ofd = null;
 
             using (FileStream fs = File.Open(srcFile, FileMode.Open, FileAccess.Read))
             {
-                StreamReader sr = new StreamReader(fs);
-
-                XDocument xmlDoc = XDocument.Load(fs);
-                foreach (XElement mapNode in xmlDoc.Descendants())
+                using (StreamReader sr = new StreamReader(fs))
                 {
-                    if (mapNode.Name == "map")
+                    XDocument xmlDoc = XDocument.Load(fs);
+                    foreach (XElement mapNode in xmlDoc.Descendants())
                     {
-                        int tryParse;
-
-                        if (int.TryParse(mapNode.GetAttributeValue("width"), out tryParse))
-                            this.Width = tryParse;
-                        if (int.TryParse(mapNode.GetAttributeValue("height"), out tryParse))
-                            this.Height = tryParse;
-                        if (int.TryParse(mapNode.GetAttributeValue("tilewidth"), out tryParse))
-                            this.TileWidth = tryParse;
-                        if (int.TryParse(mapNode.GetAttributeValue("tileheight"), out tryParse))
-                            this.TileHeight = tryParse;
-                        if (int.TryParse(mapNode.GetAttributeValue("nextobjectid"), out tryParse))
-                            this.NextObjectID = tryParse;
-
-                        TmxMapOrientation orientation;
-                        TmxTileRenderOrder renderOrder;
-
-                        if (Enum.TryParse(mapNode.GetAttributeValue("orientation").ToUpperInvariant(), out orientation))
-                            this.Orientation = orientation;
-                        if (Enum.TryParse(mapNode.GetAttributeValue("renderorder").ToUpperInvariant().Replace("-", "_"), out renderOrder))
-                            this.RenderOrder = renderOrder;
-
-                        if (mapNode.GetAttributeValue("backgroundcolor") != null)
+                        if (mapNode.Name == "map")
                         {
-                            // Substring it so we don't include the hashtag.
-                            string bgColorHex = mapNode.GetAttributeValue("backgroundcolor").Substring(1) + "FF";
+                            int tryParse;
 
-                            // Hacky way to parse HEX colors
-                            int outHex;
+                            if (int.TryParse(mapNode.GetAttributeValue("width"), out tryParse))
+                                this.Width = tryParse;
+                            if (int.TryParse(mapNode.GetAttributeValue("height"), out tryParse))
+                                this.Height = tryParse;
+                            if (int.TryParse(mapNode.GetAttributeValue("tilewidth"), out tryParse))
+                                this.TileWidth = tryParse;
+                            if (int.TryParse(mapNode.GetAttributeValue("tileheight"), out tryParse))
+                                this.TileHeight = tryParse;
+                            if (int.TryParse(mapNode.GetAttributeValue("nextobjectid"), out tryParse))
+                                this.NextObjectID = tryParse;
 
-                            if (int.TryParse(bgColorHex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out outHex))
-                                this.BackgroundColor = new ColorRgba(outHex);
-                        }
+                            TmxMapOrientation orientation;
+                            TmxTileRenderOrder renderOrder;
 
-                        // Parsing child elements
-                        foreach (XElement descendantNode in mapNode.Descendants())
-                        {
-                            // Tileset
-                            if (descendantNode.Name == "tileset" && descendantNode.Parent == mapNode)
+                            if (Enum.TryParse(mapNode.GetAttributeValue("orientation").ToUpperInvariant(), out orientation))
+                                this.Orientation = orientation;
+                            if (Enum.TryParse(mapNode.GetAttributeValue("renderorder").ToUpperInvariant().Replace("-", "_"), out renderOrder))
+                                this.RenderOrder = renderOrder;
+
+                            if (mapNode.GetAttributeValue("backgroundcolor") != null)
                             {
-                                // Check if the tileset is defined in an external file.
-                                // If it is, we parse the file.
-                                if (descendantNode.GetAttributeValue("source") != null)
-                                {
-                                    ofd = new OpenFileDialog();
-                                    ofd.CheckFileExists = true;
-                                    ofd.CheckPathExists = true;
-                                    ofd.Filter = "Tile Set XML files (*.tsx) | *.tsx";
-                                    ofd.Title = "Import tileset TSX file";
-                                    ofd.Multiselect = false;
-                                    ofd.InitialDirectory = descendantNode.GetAttributeValue("source");
-                                    ofd.FileName = descendantNode.GetAttributeValue("source");
-                                    DialogResult dialogResult = ofd.ShowDialog();
+                                // Substring it so we don't include the hashtag.
+                                string bgColorHex = mapNode.GetAttributeValue("backgroundcolor").Substring(1) + "FF";
 
-                                    if (dialogResult == DialogResult.OK)
+                                // Hacky way to parse HEX colors
+                                int outHex;
+
+                                if (int.TryParse(bgColorHex, System.Globalization.NumberStyles.HexNumber, System.Globalization.CultureInfo.InvariantCulture, out outHex))
+                                    this.BackgroundColor = new ColorRgba(outHex);
+                            }
+
+                            // Parsing child elements
+                            foreach (XElement descendantNode in mapNode.Descendants())
+                            {
+                                // Tileset
+                                if (descendantNode.Name == "tileset" && descendantNode.Parent == mapNode)
+                                {
+                                    // Check if the tileset is defined in an external file.
+                                    // If it is, we parse the file.
+                                    if (descendantNode.GetAttributeValue("source") != null)
                                     {
-                                        string ofdFile = ofd.FileName;
-                                        using (FileStream tsxStream = File.Open(ofdFile, FileMode.Open, FileAccess.ReadWrite))
-                                        {
-                                            XDocument tsxDoc = XDocument.Load(tsxStream);
-                                            tmxTileset = TmxTileset.FromXml(tsxDoc);
-                                            tmxTileset.Source = ofdFile;
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    tmxTileset = TmxTileset.FromXml(xmlDoc);
-                                    tmxTileset.Source = srcFile;
-                                }
-                                tmxTileset.Image.AnimCols = tmxTileset.Image.Width / this.TileWidth;
-                                tmxTileset.Image.AnimRows = tmxTileset.Image.Height / this.TileHeight;
-                                this.Tilesets.Add(tmxTileset);
-                            }
+                                        ofd = new OpenFileDialog();
+                                        ofd.CheckFileExists = true;
+                                        ofd.CheckPathExists = true;
+                                        ofd.Filter = "Tile Set XML files (*.tsx) | *.tsx";
+                                        ofd.Title = "Import tileset TSX file";
+                                        ofd.Multiselect = false;
+                                        ofd.InitialDirectory = descendantNode.GetAttributeValue("source");
+                                        ofd.FileName = descendantNode.GetAttributeValue("source");
+                                        DialogResult dialogResult = ofd.ShowDialog();
 
-                            // Layer
-                            if (descendantNode.Name == "layer" && descendantNode.Parent == mapNode)
-                            {
-                                tmxLayer = TmxLayer.FromXmlElement(descendantNode);
-                                this.Layers.Add(tmxLayer);
-                            }
-
-                            // Properties
-                            if (descendantNode.Name == "properties")
-                            {
-                                switch (descendantNode.Parent.Name.ToString())
-                                {
-                                    case "map":
-                                        foreach (XElement propertyElem in descendantNode.Descendants())
+                                        if (dialogResult == DialogResult.OK)
                                         {
-                                            this.Properties.Add(propertyElem.GetAttributeValue("name"), propertyElem.GetAttributeValue("value"));
-                                        }
-                                        break;
-                                    case "layer":
-                                        if (tmxLayer != null)
-                                        {
-                                            foreach (XElement propertyElem in descendantNode.Descendants())
+                                            string ofdFile = ofd.FileName;
+                                            // Copy the selected file to Source\Media.
+                                            File.Copy(ofd.FileName, System.IO.Path.Combine(System.IO.Path.GetDirectoryName(srcFile), System.IO.Path.GetFileName(ofd.FileName)), true);
+                                            using (FileStream tsxStream = File.Open(ofdFile, FileMode.Open, FileAccess.ReadWrite))
                                             {
-                                                tmxLayer.Properties.Add(propertyElem.GetAttributeValue("name"), propertyElem.GetAttributeValue("value"));
+                                                XDocument tsxDoc = XDocument.Load(tsxStream);
+                                                tmxTileset = TmxTileset.FromXml(tsxDoc);
+                                                tmxTileset.Source = ofdFile;
                                             }
                                         }
-                                        break;
-                                    /*case "objectgroup": // not yet implemented
-                                        break;
-                                    case "object":
-                                        break;
-                                    case "imagelayer":
-                                        break;*/
-                                    default:
-                                        break;
+                                    }
+                                    else
+                                    {
+                                        tmxTileset = TmxTileset.FromXml(xmlDoc);
+                                        tmxTileset.Source = srcFile;
+                                    }
+                                    tmxTileset.Image.AnimCols = tmxTileset.Image.Width / this.TileWidth;
+                                    tmxTileset.Image.AnimRows = tmxTileset.Image.Height / this.TileHeight;
+
+                                    if (!this.Tilesets.Contains(tmxTileset))    
+                                        this.Tilesets.Add(tmxTileset);
+                                }
+
+                                // Layer
+                                if (descendantNode.Name == "layer" && descendantNode.Parent == mapNode)
+                                {
+                                    tmxLayer = TmxLayer.FromXmlElement(descendantNode);
+
+                                    if (!this.Layers.Contains(tmxLayer))
+                                        this.Layers.Add(tmxLayer);
+                                }
+
+                                // Properties
+                                if (descendantNode.Name == "properties")
+                                {
+                                    switch (descendantNode.Parent.Name.ToString())
+                                    {
+                                        case "map":
+                                            foreach (XElement propertyElem in descendantNode.Descendants())
+                                            {
+                                                this.Properties.Add(propertyElem.GetAttributeValue("name"), propertyElem.GetAttributeValue("value"));
+                                            }
+                                            break;
+                                        case "layer":
+                                            if (tmxLayer != null)
+                                            {
+                                                foreach (XElement propertyElem in descendantNode.Descendants())
+                                                {
+                                                    if (!tmxLayer.Properties.ContainsKey(propertyElem.GetAttributeValue("name")))
+                                                        tmxLayer.Properties.Add(propertyElem.GetAttributeValue("name"), propertyElem.GetAttributeValue("value"));
+                                                }
+                                            }
+                                            break;
+                                        /*case "objectgroup": // not yet implemented
+                                            break;
+                                        case "object":
+                                            break;
+                                        case "imagelayer":
+                                            break;*/
+                                        default:
+                                            break;
+                                    }
                                 }
                             }
                         }
@@ -235,6 +241,7 @@ namespace DualityTiled.Core
 
                 XDocument xmlDoc = new XDocument();
 
+                // Save our map data
                 XElement mapElement = new XElement("map");
                 mapElement.SetAttributeValue("version", this.Version);
                 mapElement.SetAttributeValue("orientation", this.Orientation.ToString().ToLowerInvariant());
@@ -247,6 +254,7 @@ namespace DualityTiled.Core
                 mapElement.SetAttributeValue("nextobjectid", this.NextObjectID);
                 xmlDoc.Add(mapElement);
 
+                // Save properties.
                 XElement propertiesElement = new XElement("properties");
                 foreach (KeyValuePair<string, string> property in this.Properties)
                 {
@@ -258,6 +266,7 @@ namespace DualityTiled.Core
                 }
                 mapElement.Add(propertiesElement);
 
+                // Save tilesets
                 foreach (TmxTileset tmxTileset in this.Tilesets)
                 {
                     XElement tilesetElement = new XElement("tileset");
