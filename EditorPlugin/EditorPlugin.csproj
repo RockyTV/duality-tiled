@@ -33,40 +33,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Aga.Controls">
-      <HintPath>..\..\..\Aga.Controls.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Duality">
       <HintPath>..\..\..\Duality.dll</HintPath>
-      <Private>False</Private>
     </Reference>
     <Reference Include="DualityEditor">
       <HintPath>..\..\..\DualityEditor.exe</HintPath>
-      <Private>False</Private>
     </Reference>
-    <Reference Include="OpenTK">
-      <HintPath>..\..\..\OpenTK.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="OpenTK.GLControl">
-      <HintPath>..\..\..\OpenTK.GLControl.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Xml" />
-    <Reference Include="WeifenLuo.WinFormsUI.Docking">
-      <HintPath>..\..\..\WeifenLuo.WinFormsUI.Docking.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="DualityPrimitives">
+      <HintPath>..\..\..\DualityPrimitives.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="EditorPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TmxEditorAction.cs" />
     <Compile Include="TmxFileImporter.cs" />
   </ItemGroup>
   <ItemGroup>

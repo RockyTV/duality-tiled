@@ -1,53 +1,96 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Linq;
 
 using Duality;
-using Duality.Editor;
 using Duality.Resources;
+using Duality.Editor;
+using Duality.Editor.AssetManagement;
 
 using DualityTiled.Core;
 
 namespace DualityTiled.Editor
 {
-    public class TmxFileImporter : IFileImporter
+    public class TmxFileImporter : IAssetImporter
     {
         public static readonly string SourceFileExtPrimary = ".tmx";
+		private static readonly string[] SourceFileExts = new[] { SourceFileExtPrimary };
 
-        public bool CanImportFile(string srcFile)
-        {
-            string extension = Path.GetExtension(srcFile).ToLower();
-            return extension == SourceFileExtPrimary;
-        }
+		public string Id
+		{
+			get { return "TmxAssetImporter"; }
+		}
 
-        public bool CanReImportFile(ContentRef<Resource> r, string srcFile)
-        {
-            return r.Is<TmxMap>();
-        }
+		public string Name
+		{
+			get { return "Tiled Map Importer"; }
+		}
 
-        public string[] GetOutputFiles(string srcFile, string targetName, string targetDir)
-        {
-            string targetResPath = PathHelper.GetFreePath(Path.Combine(targetDir, targetName), Resource.GetFileExtByType(typeof(TmxMap)));
-            return new string[] { targetResPath };
-        }
+		public int Priority
+		{
+			get { return 0; }
+		}
 
-        public void ImportFile(string srcFile, string targetName, string targetDir)
-        {
-            string[] output = this.GetOutputFiles(srcFile, targetName, targetDir);
-            TmxMap tmxMap = new TmxMap();
-            tmxMap.LoadMapData(srcFile);
-            tmxMap.Save(output[0]);
-        }
+		public void PrepareImport(IAssetImportEnvironment env)
+		{
+			// Ask to handle all input that matches the conditions in AcceptsInput
+			foreach (AssetImportInput input in env.HandleAllInput(this.AcceptsInput))
+			{
+				// For all handled input items, specify which Resource the importer intends to create / modify
+				env.AddOutput<TmxMap>(input.AssetName, input.Path);
+			}
+		}
 
-        public bool IsUsingSrcFile(ContentRef<Resource> r, string srcFile)
-        {
-            ContentRef<TmxMap> tmxMap = r.As <TmxMap>();
-            return tmxMap != null && tmxMap.Res.SourcePath == srcFile;
-        }
+		public void Import(IAssetImportEnvironment env)
+		{
+			// Handle all available input. No need to filter or ask for this anymore, as
+			// the preparation step already made a selection with AcceptsInput. We won't
+			// get any input here that didn't match.
+			foreach (AssetImportInput input in env.Input)
+			{
+				// Request a target Resource with a name matching the input
+				ContentRef<TmxMap> targetRef = env.GetOutput<TmxMap>(input.AssetName);
 
-        public void ReImportFile(ContentRef<Resource> r, string srcFile)
-        {
-            TmxMap tmxMap = r.Res as TmxMap;
-            tmxMap.SourcePath = srcFile;
-            tmxMap.LoadMapData(srcFile);
-        }
+				// If we successfully acquired one, proceed with the import
+				if (targetRef.IsAvailable)
+				{
+					TmxMap target = targetRef.Res;
+
+					// Update map data from the input file
+					target.LoadMapData(input.Path);
+
+					// Add the requested output to signal that we've done something with it
+					env.AddOutput(targetRef, input.Path);
+				}
+			}
+		}
+
+		public void PrepareExport(IAssetExportEnvironment env)
+		{
+			// We can export any Resource that is a TmxMap with a XML data
+			TmxMap input = env.Input as TmxMap;
+			if (input != null)
+			{
+				// Add the file path of the exported output we'll produce.
+				env.AddOutputPath(env.Input.Name + SourceFileExtPrimary);
+			}
+		}
+
+		public void Export(IAssetExportEnvironment env)
+		{
+			// Determine input and output path
+			TmxMap input = env.Input as TmxMap;
+			string outputPath = env.AddOutputPath(input.Name + SourceFileExtPrimary);
+
+			// Take the input Resource's map data and save it at the specified location
+			input.SaveMapData(outputPath);
+		}
+
+		private bool AcceptsInput(AssetImportInput input)
+		{
+			string inputFileExt = Path.GetExtension(input.Path);
+			bool matchingFileExt = SourceFileExts.Any(acceptedExt => string.Equals(inputFileExt, acceptedExt, StringComparison.CurrentCultureIgnoreCase));
+			return matchingFileExt;
+		}
     }
 }
