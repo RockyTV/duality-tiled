@@ -12,7 +12,6 @@ using DualityTiled.Extensions;
 
 namespace DualityTiled.Core
 {
-    [Serializable]
     public class TmxLayer
     {
         public string Name;
@@ -64,7 +63,6 @@ namespace DualityTiled.Core
         }
     }
 
-    [Serializable]
     public struct TmxData
     {
         [EditorHintFlags(MemberFlags.ReadOnly)]
