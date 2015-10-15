@@ -14,7 +14,8 @@ namespace DualityTiled.Editor
     public class TmxFileImporter : IAssetImporter
     {
         public static readonly string SourceFileExtPrimary = ".tmx";
-		private static readonly string[] SourceFileExts = new[] { SourceFileExtPrimary };
+		public static readonly string SourceFileExtSecondary = ".tsx";
+		private static readonly string[] SourceFileExts = new[] { SourceFileExtPrimary, SourceFileExtSecondary };
 
 		public string Id
 		{
@@ -31,13 +32,21 @@ namespace DualityTiled.Editor
 			get { return 0; }
 		}
 
+		
+
 		public void PrepareImport(IAssetImportEnvironment env)
 		{
 			// Ask to handle all input that matches the conditions in AcceptsInput
 			foreach (AssetImportInput input in env.HandleAllInput(this.AcceptsInput))
 			{
 				// For all handled input items, specify which Resource the importer intends to create / modify
-				env.AddOutput<TmxMap>(input.AssetName, input.Path);
+				string fileExtension = Path.GetExtension(input.RelativePath);
+
+				// Check if the file is a map or a tileset
+				if (fileExtension == SourceFileExtPrimary)
+					env.AddOutput<TmxMap>(input.AssetName, input.Path);
+				else if (fileExtension == SourceFileExtSecondary)
+					env.AddOutput<TmxTileset>(input.AssetName, input.Path);
 			}
 		}
 
@@ -48,19 +57,42 @@ namespace DualityTiled.Editor
 			// get any input here that didn't match.
 			foreach (AssetImportInput input in env.Input)
 			{
-				// Request a target Resource with a name matching the input
-				ContentRef<TmxMap> targetRef = env.GetOutput<TmxMap>(input.AssetName);
+				string fileExtension = Path.GetExtension(input.RelativePath);
 
-				// If we successfully acquired one, proceed with the import
-				if (targetRef.IsAvailable)
+				if (fileExtension == SourceFileExtPrimary)
 				{
-					TmxMap target = targetRef.Res;
+					// Request a target Resource with a name matching the input
+					ContentRef<TmxMap> targetRef = env.GetOutput<TmxMap>(input.AssetName);
 
-					// Update map data from the input file
-					target.LoadMapData(input.Path);
+					// If we successfully acquired one, proceed with the import
+					if (targetRef.IsAvailable)
+					{
+						TmxMap target = targetRef.Res;
 
-					// Add the requested output to signal that we've done something with it
-					env.AddOutput(targetRef, input.Path);
+						// Update map data from the input file
+						target.RawData = File.ReadAllBytes(input.Path);
+						target.LoadMapData();
+
+						// Add the requested output to signal that we've done something with it
+						env.AddOutput(targetRef, input.Path);
+					}
+				}
+				else if (fileExtension == SourceFileExtSecondary)
+				{
+					// Request a target Resource with a name matching the input
+					ContentRef<TmxTileset> targetRef = env.GetOutput<TmxTileset>(input.AssetName);
+
+					// If we successfully acquired one, proceed with the import
+					if (targetRef.IsAvailable)
+					{
+						TmxTileset target = targetRef.Res;
+
+						// Update map data from the input file
+						target.RawData = File.ReadAllBytes(input.Path);
+
+						// Add the requested output to signal that we've done something with it
+						env.AddOutput(targetRef, input.Path);
+					}
 				}
 			}
 		}

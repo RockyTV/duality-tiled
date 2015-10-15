@@ -1,12 +1,18 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace DualityTiled.Core.Properties
+namespace DualityTiled.Properties
 {
-    /// <summary>
-    /// This static class contains constant string representations of certain <see cref="DualityTiled.Core.Properties.TiledRes"/> resource entries.
-    /// </summary>
-    public static class TiledResNames
-    {
-        public const string ImageMap = "IconResTmxMap";
-    }
+	/// <summary>
+	/// This static class contains constant string representations of certain resource names.
+	/// </summary>
+	public static class TiledResNames
+	{
+		private const string ManifestBaseName = "DualityTiled.Core.EmbeddedResources.";
+
+		public const string IconResourceMap = ManifestBaseName + "IconResTmxMap.png";
+		public const string IconResourceTileset = ManifestBaseName + "images.png";
+	}
 }

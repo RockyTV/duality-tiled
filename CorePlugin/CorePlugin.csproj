@@ -49,29 +49,21 @@
     <Compile Include="CorePlugin.cs" />
     <Compile Include="Extensions\ColorRgbaExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Properties\TiledRes.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>TiledRes.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\TiledResNames.cs" />
     <Compile Include="TmxComponent.cs" />
     <Compile Include="TmxFile\TmxEnums.cs" />
     <Compile Include="TmxFile\TmxLayer.cs" />
-    <Compile Include="TmxResource.cs" />
+    <Compile Include="TmxMapResource.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TmxFile\TmxTerrain.cs" />
     <Compile Include="TmxFile\TmxTile.cs" />
-    <Compile Include="TmxTileset.cs" />
+    <Compile Include="TmxTilesetResource.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Properties\TiledRes.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>TiledRes.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    <EmbeddedResource Include="EmbeddedResources\IconResTmxMap.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="EmbeddedResources\IconResTmxMap.png" />
+    <EmbeddedResource Include="EmbeddedResources\images.png" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Portable\$(TargetFrameworkVersion)\Microsoft.Portable.CSharp.targets" />
   <PropertyGroup>

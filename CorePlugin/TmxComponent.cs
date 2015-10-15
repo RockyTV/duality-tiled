@@ -9,9 +9,8 @@ using Duality.Properties;
 
 namespace DualityTiled.Core
 {
-    [Serializable]
     [RequiredComponent(typeof(TmxMap))]
-    [EditorHintCategory(typeof(CoreRes), "Tiled")]
+    [EditorHintCategory("Tiled")]
     public class TmxComponent : Component
     {
 
